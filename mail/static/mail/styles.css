@@ -1,0 +1,145 @@
+body{
+    font-family: 'Crimson Text', serif;
+    font-size: 18px;
+}
+
+
+.container{
+    overflow: hidden;
+}
+
+textarea {
+    height: 250px;
+}
+
+.form-control{
+    margin: 7px;
+}
+
+h2{
+    padding: 15px 0px;
+}
+
+.div-box{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    animation-name: hide;
+    animation-duration: 0.8s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+    animation-play-state: paused;
+    
+}
+
+.div-email{
+    display: flex;
+    flex-direction: row;
+    padding: 15px 15px;
+    flex-wrap: wrap;
+    transition: 0.1s;
+    width: 100%;
+    max-width: 100%;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    justify-content: space-between;
+
+}
+
+
+.div-email:hover{
+    transform: scale(1.005);
+}
+
+
+.pd-right{
+    padding-right: 80px;
+}
+
+.div-DT{
+    text-align: right;
+}
+
+.header-flex{
+    display: flex;
+    flex-direction: row;
+}
+
+#body-email{
+    padding-bottom: 50px;
+}
+
+#back button {
+    border: none;
+    background-color: white;
+    padding: 0;
+}
+
+#back button img{
+    width: 30px;
+    padding-bottom: 10px;
+}
+
+#msg{
+    width: max-content;
+    text-align: center;
+    animation-name: close;
+    animation-duration: 0.5s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+    animation-play-state: paused;
+}
+
+.div-archive{
+    display: flex;
+    align-items: center;
+}
+
+.btn-outline-danger, .btn-outline-success{
+    padding: 8px;    
+    transition: 0.1s;
+}
+
+.btn-outline-danger:hover, .btn-outline-success:hover{
+    background-color: white;
+    
+}
+
+.btn-outline-danger:hover img, .btn-outline-success:hover img{
+    transform: scale(1.1);
+}
+
+.img-icon{
+    width: 20px;
+}
+
+@keyframes hide{
+
+    0%{
+        opacity: 1;
+        left: 0;
+    }
+
+    100%{
+        opacity: 0;
+        left: 100%;
+    }
+
+}
+
+@keyframes close{
+
+    0%{
+        opacity: 1;
+        left: 0;
+    }
+
+    50%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 0;
+        left: 30%;
+    }
+
+}
+
