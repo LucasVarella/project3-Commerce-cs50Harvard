@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Print result
         console.log(result);
 
-        // ADD ANIMATION HERE
         if (result.error){
           const msg = document.createElement('div');
           msg.setAttribute('id', 'msg');
