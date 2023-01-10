@@ -57,17 +57,32 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-function compose_email() {
+function compose_email(e) {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#email-open').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
-  // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
+  if (e.recipients === undefined){
+    // Clear out composition fields
+    document.querySelector('#compose-recipients').value = '';
+    document.querySelector('#compose-subject').value = '';
+    document.querySelector('#compose-body').value = '';
+    
+  }else{
+    document.querySelector('#compose-recipients').value = e.recipients;
+
+      if (e.subject.includes("Re:")){
+        document.querySelector('#compose-subject').value = e.subject;
+      }else{
+        document.querySelector('#compose-subject').value = "Re: "+ e.subject;
+      }
+    
+    document.querySelector('#compose-body').value = "On "+e.timestamp+" "+e.sender+" wrote: \n"+e.body+"\n\n";
+    document.querySelector('#compose-body').focus();
+  }
+
 
 }
 
@@ -232,7 +247,11 @@ function open_email(e){
         read: true
     })
   })
-  console.log(e);
+  
+  document.querySelector('#reply').addEventListener('click', () =>{
+    
+    compose_email(e);
+  });
   
 }
 
