@@ -13,19 +13,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const recipients = document.querySelector('#compose-recipients').value;
     const subject = document.querySelector('#compose-subject').value;
     const body = document.querySelector('#compose-body').value;
-    
+    let bodyContent = new String(body);
+    while (bodyContent.includes('\n')){
+      bodyContent = bodyContent.replace('\n','<br>');
+    }
+
     fetch('/emails', {
       method: 'POST',
       body: JSON.stringify({
           recipients: recipients,
           subject: subject,
-          body: body
+          body: bodyContent
       })
     })
     .then(response => response.json())
     .then(result => {
-        // Print result
-        console.log(result);
 
         if (result.error){
           const msg = document.createElement('div');
@@ -44,18 +46,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }else{
           load_mailbox('sent');
         }
-    
     });
-
+    
     // Stop form from submitting
     return false;
   }
 
   // By default, load the inbox
   load_mailbox('inbox');
-
 });
-
 
 function compose_email(e) {
 
@@ -64,14 +63,16 @@ function compose_email(e) {
   document.querySelector('#email-open').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
+  // Check if it's not an reply
   if (e.recipients === undefined){
     // Clear out composition fields
     document.querySelector('#compose-recipients').value = '';
     document.querySelector('#compose-subject').value = '';
     document.querySelector('#compose-body').value = '';
     
+  // Reply
   }else{
-    document.querySelector('#compose-recipients').value = e.recipients;
+    document.querySelector('#compose-recipients').value = e.sender;
 
       if (e.subject.includes("Re:")){
         document.querySelector('#compose-subject').value = e.subject;
@@ -79,11 +80,14 @@ function compose_email(e) {
         document.querySelector('#compose-subject').value = "Re: "+ e.subject;
       }
     
-    document.querySelector('#compose-body').value = "On "+e.timestamp+" "+e.sender+" wrote: \n"+e.body+"\n\n";
+    let bodyContent = new String(e.body);
+    bodyContent = bodyContent.trim();
+    while (bodyContent.includes('<br>')){
+      bodyContent = bodyContent.replace('<br>', '\n');
+    }
+    document.querySelector('#compose-body').value = "On "+e.timestamp+" "+e.sender+" wrote: \n"+bodyContent+"\n\n";
     document.querySelector('#compose-body').focus();
   }
-
-
 }
 
 
@@ -102,13 +106,19 @@ function create_div_email(e, origin){
   spanSubject.style.fontWeight = 'bold';
   divMid.append(spanSubject);
   const spanBody = document.createElement('span');
-  spanBody.innerHTML =' - ' + e.body.substr(0,60)+"...";
+
+  let bodyContent = new String(e.body);
+  bodyContent = bodyContent.trim();
+  while (bodyContent.includes('<br>')){
+    bodyContent = bodyContent.replace('<br>', ' ');
+  }
+
+  spanBody.innerHTML =' - ' + bodyContent.substr(0,60)+"...";
   divMid.append(spanBody);
 
   const divDT = document.createElement('div');
   divDT.innerHTML = e.timestamp;
   divDT.classList.add('div-DT');
-
 
   if(e.read === true){
     divEmail.style.backgroundColor = 'whitesmoke';
@@ -117,7 +127,6 @@ function create_div_email(e, origin){
   if (origin === 'sent'){
     divUser.innerHTML = "to: " + e.recipients;
     
-
   //origin = inbox or archives
   }else{
     divUser.innerHTML = e.sender;
@@ -140,22 +149,15 @@ function create_div_email(e, origin){
     }else{
       imgArchive.setAttribute('src', '../../static/mail/imgs/unarchive.png');
     }
-
     divArchive.append(imgArchive);
-
   }
 
-  
   divEmail.append(divUser);
   divEmail.append(divMid);
   divEmail.append(divDT);
 
-
-
   divEmail.addEventListener('click', function() {
-    console.log('This element has been clicked!')
     open_email(e);
-
   });
 
   const divBox = document.createElement('div');
@@ -169,14 +171,10 @@ function create_div_email(e, origin){
     this.parentElement.style.animationPlayState = 'running';
     this.parentElement.addEventListener('animationend', () =>{
       this.parentElement.remove();
-      
     })
-
   });
 
   document.querySelector('#emails-view').append(divBox);
-  
-
 }
 
 function load_mailbox(mailbox) {
@@ -225,7 +223,6 @@ function load_mailbox(mailbox) {
       });
     }
   }
- 
 }
 
 function open_email(e){
@@ -239,7 +236,8 @@ function open_email(e){
   document.querySelector('#header-subject').innerHTML = e.subject;
   document.querySelector('#header-timestamp').innerHTML = e.timestamp;
 
-  document.querySelector('#body-email').innerHTML = e.body;
+  let bodyContent = new String(e.body);
+  document.querySelector('#body-email').innerHTML = bodyContent;
 
   fetch(`/emails/${e.id}`, {
     method: 'PUT',
@@ -249,10 +247,8 @@ function open_email(e){
   })
   
   document.querySelector('#reply').addEventListener('click', () =>{
-    
     compose_email(e);
   });
-  
 }
 
 function archive_email(e){
@@ -272,7 +268,4 @@ function archive_email(e){
       })
     })
   }
-
-  console.log('Email arquivado');
-  
 }
